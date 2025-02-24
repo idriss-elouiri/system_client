@@ -1,4 +1,4 @@
-import User from "./auth.model.js";
+import Admin from "./authAdmin.model.js";
 import bcryptjs from "bcryptjs";
 import { errorHandler } from "../../utils/error.js";
 import jwt from "jsonwebtoken";
@@ -7,14 +7,14 @@ export const registerHandler = async (req, res, next) => {
   const { name, email, password } = req.body;
   const hashedPassword = bcryptjs.hashSync(password, 10);
 
-  const newUser = new User({
+  const newAdmin = new Admin({
     name,
     email,
     password: hashedPassword,
   });
 
   try {
-    await newUser.save();
+    await newAdmin.save();
     res.json("تم التسجيل بنجاح");
   } catch (error) {
     next(error);
@@ -25,22 +25,22 @@ export const loginHandler = async (req, res, next) => {
   const { email, password } = req.body;
 
   try {
-    const validUser = await User.findOne({ email });
-    if (!validUser) {
+    const validAdmin = await Admin.findOne({ email });
+    if (!validAdmin) {
       return next(errorHandler(404, "لم يتم العثور على المستخدم"));
     }
 
-    const validPassword = bcryptjs.compareSync(password, validUser.password);
+    const validPassword = bcryptjs.compareSync(password, validAdmin.password);
     if (!validPassword) {
       return next(errorHandler(400, "كلمة المرور غير صالحة"));
     }
 
     const token = jwt.sign(
-      { id: validUser._id, isAdmin: validUser.isAdmin },
+      { id: validAdmin._id, isAdmin: validAdmin.isAdmin },
       process.env.JWT_SECRET
     );
 
-    const { password: pass, ...rest } = validUser._doc;
+    const { password: pass, ...rest } = validAdmin._doc;
 
     return res
       .status(200)

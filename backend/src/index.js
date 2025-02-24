@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import { connectDb } from "./config/db.js";
+import authAdminRouter from "./modules/authAdmin/authAdmin.route.js";
 import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
 
@@ -14,7 +15,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(
   cors({
-    origin: [process.env.FRONTEND_URL, process.env.FRONTEND_URL2],
+    origin: process.env.FRONTEND_URL,
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
@@ -22,6 +23,7 @@ app.use(
 );
 
 // Routes
+app.use("/api/authAdmin", authAdminRouter);
 
 // Health check endpoint
 app.get("/health", (req, res) => {
