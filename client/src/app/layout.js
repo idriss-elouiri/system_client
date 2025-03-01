@@ -1,3 +1,4 @@
+import ReduxProvider from "@/components/ReduxProvider";
 import "./globals.css";
 
 export const metadata = {
@@ -8,10 +9,8 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body
-        className={`antialiased`}
-      >
-        {children}
+      <body className={`antialiased`}>
+        <ReduxProvider>{children}</ReduxProvider>
       </body>
     </html>
   );

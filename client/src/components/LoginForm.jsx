@@ -3,42 +3,48 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  signInStart,
+  signInSuccess,
+  signInFailure,
+} from "../redux/user/userSlice";
 
-const Login = () => {
+const LoginForm = ({ role }) => {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
-  const [errorMessage, setErrorMessage] = useState(null);
-  const [loading, setLoading] = useState(false);
+
+  const { loading, error: errorMessage } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
   const router = useRouter();
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+  // تحديد API بناءً على نوع المستخدم
+  const getApiEndpoint = () => {
+    switch (role) {
+      case "admin":
+        return `${apiUrl}/api/authAdmin/login`;
+      case "owner":
+        return `${apiUrl}/api/authComown/login`;
+      case "contractor":
+        return `${apiUrl}/api/contractors/login`;
+      default:
+        return `${apiUrl}/api/auth/login`;
+    }
   };
 
-  const validateForm = () => {
-    if (!formData.email || !formData.password) {
-      setErrorMessage("يرجى ملء جميع الحقول.");
-      return false;
-    }
-    return true;
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (!validateForm()) return;
-
-    setLoading(true);
-    setErrorMessage(null);
+    dispatch(signInStart());
 
     try {
-      const res = await fetch(`${apiUrl}/api/authAdmin/login`, {
+      const res = await fetch(getApiEndpoint(), {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
@@ -46,29 +52,26 @@ const Login = () => {
       });
 
       const data = await res.json();
-
-      if (!res.ok) {
-        setErrorMessage(data.message || "فشل التسجيل.");
-      } else {
-        router.push("/");
+      if (!res.ok || data.success === false) {
+        dispatch(signInFailure(data.message));
+        throw new Error(data.message || "Login failed. Please try again.");
       }
+
+      dispatch(signInSuccess(data));
+
+      // تحديد الصفحة التي سيتم التوجيه إليها
+      router.push(`/${role}Dashboard`);
     } catch (error) {
-      setErrorMessage("حدث خطأ. يرجى المحاولة مرة أخرى لاحقا.");
-    } finally {
-      setLoading(false);
+      dispatch(signInFailure(error.message));
     }
   };
 
   return (
-    <div
-      dir="rtl"
-      className="min-h-screen flex items-center justify-center py-10"
-    >
+    <div dir="rtl" className="min-h-screen flex items-center justify-center py-10">
       <div className="flex w-full max-w-6xl bg-white rounded-lg shadow-lg overflow-hidden">
-        {/* Left Side - Form */}
         <div className="w-full lg:w-1/2 px-6 py-8">
           <h2 className="text-3xl font-semibold text-center mb-6">
-            تسجيل الدخول
+            {role.charAt(0).toUpperCase() + role.slice(1)} Login
           </h2>
 
           {errorMessage && (
@@ -78,7 +81,7 @@ const Login = () => {
           <form onSubmit={handleSubmit}>
             <div className="mb-4">
               <label className="block text-lg font-medium mb-2" htmlFor="email">
-                البريد الإلكتروني
+                Email
               </label>
               <input
                 type="email"
@@ -91,11 +94,8 @@ const Login = () => {
               />
             </div>
             <div className="mb-4">
-              <label
-                className="block text-lg font-medium mb-2"
-                htmlFor="password"
-              >
-                كلمة المرور
+              <label className="block text-lg font-medium mb-2" htmlFor="password">
+                Password
               </label>
               <input
                 type="password"
@@ -112,13 +112,12 @@ const Login = () => {
               className="w-full bg-black text-white py-2 rounded-lg mt-4 transition"
               disabled={loading}
             >
-              {loading ? "جارٍ التسجيل..." : "تسجيل"}
+              {loading ? "جارٍ التسجيل..." : "تسجيل الدخول"}
             </button>
           </form>
 
-          {/* Login Redirect */}
           <div className="mt-4 text-center">
-            <Link href={"/register"}>ليس لدي حساب؟</Link>{" "}
+            <Link href={"/register"}>ليس لدي حساب؟</Link>
             <button
               onClick={() => router.push("/login")}
               className="text-blue-500 hover:underline"
@@ -128,7 +127,6 @@ const Login = () => {
           </div>
         </div>
 
-        {/* Right Side - Image */}
         <div
           className="hidden lg:block w-1/2 bg-cover bg-center"
           style={{ backgroundImage: 'url("/images/contact_img.png")' }}
@@ -138,4 +136,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default LoginForm;
