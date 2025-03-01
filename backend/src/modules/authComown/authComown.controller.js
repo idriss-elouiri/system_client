@@ -1,4 +1,4 @@
-import Admin from "./authAdmin.model.js";
+import Comown from "./authComown.model.js";
 import bcryptjs from "bcryptjs";
 import { errorHandler } from "../../utils/error.js";
 import jwt from "jsonwebtoken";
@@ -7,14 +7,14 @@ export const registerHandler = async (req, res, next) => {
   const { name, email, password } = req.body;
   const hashedPassword = bcryptjs.hashSync(password, 10);
 
-  const newAdmin = new Admin({
+  const newComown = new Comown({
     name,
     email,
     password: hashedPassword,
   });
 
   try {
-    await newAdmin.save();
+    await newComown.save();
     res.json("login successFully");
   } catch (error) {
     next(error);
@@ -25,22 +25,22 @@ export const loginHandler = async (req, res, next) => {
   const { email, password } = req.body;
 
   try {
-    const validAdmin = await Admin.findOne({ email });
-    if (!validAdmin) {
-      return next(errorHandler(404, "Account admin not found"));
+    const validComown = await Comown.findOne({ email });
+    if (!validComown) {
+      return next(errorHandler(404, "Account Comown not found"));
     }
 
-    const validPassword = bcryptjs.compareSync(password, validAdmin.password);
+    const validPassword = bcryptjs.compareSync(password, validComown.password);
     if (!validPassword) {
       return next(errorHandler(400, "password incorrect"));
     }
 
     const token = jwt.sign(
-      { id: validAdmin._id, isAdmin: validAdmin.isAdmin },
+      { id: validComown._id, isComown: validComown.isComown },
       process.env.JWT_SECRET
     );
 
-    const { password: pass, ...rest } = validAdmin._doc;
+    const { password: pass, ...rest } = validComown._doc;
 
     return res
       .status(200)
