@@ -11,5 +11,6 @@ router.post(
   authComownController.registerHandler
 );
 router.post("/login", validateZod(loginShcema), authComownController.loginHandler);
+router.get("/", authComownController.getHandler);
 
 export default router;

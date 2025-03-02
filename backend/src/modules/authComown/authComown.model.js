@@ -2,6 +2,10 @@ import mongoose from "mongoose";
 
 const comownSchema = new mongoose.Schema(
   {
+    companyId: {
+      type: String,
+      required: true,
+    },
     name: {
       type: String,
       required: true,

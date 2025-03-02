@@ -2,6 +2,10 @@ import mongoose from "mongoose";
 
 const contractorSchema = new mongoose.Schema(
   {
+    id: {
+      type: String,
+      required: true
+    },
     name: {
       type: String,
       required: true,
@@ -10,6 +14,10 @@ const contractorSchema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
+    },
+    phoneNumber: {
+      type: String,
+      required: true,
     },
     password: {
       type: String,

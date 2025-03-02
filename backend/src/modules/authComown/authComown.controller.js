@@ -4,10 +4,11 @@ import { errorHandler } from "../../utils/error.js";
 import jwt from "jsonwebtoken";
 
 export const registerHandler = async (req, res, next) => {
-  const { name, email, password } = req.body;
+  const { companyId, name, email, password } = req.body;
   const hashedPassword = bcryptjs.hashSync(password, 10);
 
   const newComown = new Comown({
+    companyId,
     name,
     email,
     password: hashedPassword,
@@ -15,7 +16,7 @@ export const registerHandler = async (req, res, next) => {
 
   try {
     await newComown.save();
-    res.json("login successFully");
+    res.json("register successFully");
   } catch (error) {
     next(error);
   }
@@ -50,6 +51,15 @@ export const loginHandler = async (req, res, next) => {
         sameSite: "None",
       })
       .json(rest);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getHandler = async (req, res, next) => {
+  try {
+    const comowns = await Comown.find();
+    res.json(comowns);
   } catch (error) {
     next(error);
   }

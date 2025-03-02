@@ -4,11 +4,13 @@ import { errorHandler } from "../../utils/error.js";
 import jwt from "jsonwebtoken";
 
 export const registerHandler = async (req, res, next) => {
-  const { name, email, password } = req.body;
+  const { id, name, phoneNumber, email, password } = req.body;
   const hashedPassword = bcryptjs.hashSync(password, 10);
 
   const newContractor = new Contractor({
+    id,
     name,
+    phoneNumber,
     email,
     password: hashedPassword,
   });
@@ -30,7 +32,10 @@ export const loginHandler = async (req, res, next) => {
       return next(errorHandler(404, "Account Contractor not found"));
     }
 
-    const validPassword = bcryptjs.compareSync(password, validContractor.password);
+    const validPassword = bcryptjs.compareSync(
+      password,
+      validContractor.password
+    );
     if (!validPassword) {
       return next(errorHandler(400, "password incorrect"));
     }
@@ -50,6 +55,43 @@ export const loginHandler = async (req, res, next) => {
         sameSite: "None",
       })
       .json(rest);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getHandler = async (req, res, next) => {
+  try {
+    const contractors = await Contractor.find();
+    res.json(contractors);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const updateHandler = async (req, res, next) => {
+  try {
+    const updatedContractor = await Contractor.findByIdAndUpdate(
+      req.params.id,
+      {
+        id: req.body.id,
+        name: req.body.name,
+        phoneNumber: req.body.number,
+        email: req.body.email,
+        password: req.body.password,
+      },
+      { new: true }
+    );
+    res.json(updatedContractor);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const deleteHandler = async (req, res, next) => {
+  try {
+    await Contractor.findByIdAndDelete(req.params.id);
+    res.json({ message: 'delete success' });
   } catch (error) {
     next(error);
   }

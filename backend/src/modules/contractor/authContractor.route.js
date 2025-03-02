@@ -11,5 +11,8 @@ router.post(
   authContractorController.registerHandler
 );
 router.post("/login", validateZod(loginShcema), authContractorController.loginHandler);
+router.get("/", authContractorController.getHandler);
+router.put("/:id", authContractorController.updateHandler);
+router.delete("/:id", authContractorController.deleteHandler);
 
 export default router;

@@ -15,7 +15,7 @@ export const registerHandler = async (req, res, next) => {
 
   try {
     await newAdmin.save();
-    res.json("login successFully");
+    res.json("register successFully");
   } catch (error) {
     next(error);
   }

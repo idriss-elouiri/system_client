@@ -4,6 +4,8 @@ import { connectDb } from "./config/db.js";
 import authAdminRouter from "./modules/authAdmin/authAdmin.route.js";
 import authComownRouter from "./modules/authComown/authComown.route.js";
 import contractorsRouter from "./modules/contractor/authContractor.route.js";
+import projectRouter from "./modules/project/project.route.js";
+import paymentRouter from "./modules/payment/payment.route.js";
 import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
 
@@ -28,7 +30,8 @@ app.use(
 app.use("/api/authAdmin", authAdminRouter);
 app.use("/api/authComown", authComownRouter);
 app.use("/api/contractors", contractorsRouter);
-
+app.use("/api/projects", projectRouter);
+app.use("/api/payments", paymentRouter);
 // Health check endpoint
 app.get("/health", (req, res) => {
   res.status(200).json({ status: "OK" });
