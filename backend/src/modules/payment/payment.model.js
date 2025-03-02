@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const paymentSchema = new mongoose.Schema(
   {
-    project_id: { type: String, ref: "Project", required: true },
+    project_id: { type: mongoose.Schema.Types.ObjectId, ref: "Project", required: true },
     amount: { type: Number, required: true },
     payment_status: {
       type: String,
@@ -10,7 +10,7 @@ const paymentSchema = new mongoose.Schema(
       default: "Unpaid",
     },
     payment_date: { type: Date, required: true },
-    contractor_id: { type: String, ref: "Contractor", required: true },
+    contractor_id: { type: mongoose.Schema.Types.ObjectId, ref: "Contractor", required: true },
   },
   { timestamps: true }
 );

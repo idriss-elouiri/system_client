@@ -2,10 +2,7 @@ import mongoose from "mongoose";
 
 const contractorSchema = new mongoose.Schema(
   {
-    id: {
-      type: String,
-      required: true
-    },
+    id: { type: String, required: true },
     name: {
       type: String,
       required: true,

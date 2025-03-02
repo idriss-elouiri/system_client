@@ -12,8 +12,8 @@ const projectSchema = new mongoose.Schema({
   },
   location: { type: String, required: true },
   assigned_location: { type: String, required: true },
-  company_id: { type: String, ref: "Company", required: true },
-  contractor_id: { type: String, ref: "Contractor", required: true },
+  company_id: { type: mongoose.Schema.Types.ObjectId, ref: "Company", required: true },
+  contractor_id: { type: mongoose.Schema.Types.ObjectId, ref: "Contractor", required: true },
 }, { timestamps: true });
 
 // التحقق من حالة المشروع بناءً على تاريخ الانتهاء
