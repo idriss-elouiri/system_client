@@ -1,4 +1,3 @@
-// src/components/AddContractor.js
 import React, { useState } from "react";
 
 const AddContractor = ({ onAdd }) => {

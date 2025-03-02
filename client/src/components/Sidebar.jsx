@@ -2,6 +2,8 @@ import Link from "next/link";
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import {
+    FaPlayCircle,
+    FaRProject,
   FaTachometerAlt,
 } from "react-icons/fa";
 import { MdPeople } from "react-icons/md"; // HRM Icon
@@ -56,6 +58,24 @@ const Sidebar = ({ showNav, onClose }) => {
           >
             <MdPeople className="mr-2" />
             قسم المقاولين
+          </Link>
+        )}
+        {isAdmin && (
+          <Link
+            href="/projectsPage"
+            className="flex items-center block p-2 rounded hover:bg-indigo-700"
+          >
+            <FaRProject className="mr-2" />
+            قسم المشاريع
+          </Link>
+        )}
+        {isAdmin && (
+          <Link
+            href="/PaymentsPage"
+            className="flex items-center block p-2 rounded hover:bg-indigo-700"
+          >
+            <FaPlayCircle className="mr-2" />
+            قسم المدفوعات
           </Link>
         )}
       </nav>
