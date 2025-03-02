@@ -2,8 +2,10 @@ import Link from "next/link";
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import {
-    FaPlayCircle,
-    FaRProject,
+  FaBattleNet,
+  FaNetworkWired,
+  FaPlayCircle,
+  FaRProject,
   FaTachometerAlt,
 } from "react-icons/fa";
 import { MdPeople } from "react-icons/md"; // HRM Icon
@@ -42,7 +44,7 @@ const Sidebar = ({ showNav, onClose }) => {
       </div>
       <nav className="space-y-4">
         {/* Main Menu */}
-        {(isAdmin) && (
+        {isAdmin && (
           <Link
             href="/dashboard"
             className="flex items-center block p-2 rounded hover:bg-indigo-700"
@@ -76,6 +78,24 @@ const Sidebar = ({ showNav, onClose }) => {
           >
             <FaPlayCircle className="mr-2" />
             قسم المدفوعات
+          </Link>
+        )}
+        {isAdmin && (
+          <Link
+            href="/workers"
+            className="flex items-center block p-2 rounded hover:bg-indigo-700"
+          >
+            <FaNetworkWired className="mr-2" />
+            العمال{" "}
+          </Link>
+        )}
+        {isAdmin && (
+          <Link
+            href="/attendance"
+            className="flex items-center block p-2 rounded hover:bg-indigo-700"
+          >
+            <FaBattleNet className="mr-2" />
+            الحضور{" "}
           </Link>
         )}
       </nav>
