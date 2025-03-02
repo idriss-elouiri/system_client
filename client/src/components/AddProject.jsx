@@ -139,7 +139,7 @@ const AddProject = ({ onAdd }) => {
       >
         <option value="">اختر الشركة</option>
         {comowns.map((comown) => (
-          <option key={comown._id} value={comown.companyId}>
+            <option key={comown._id} value={comown._id}>
             {comown.name}
           </option>
         ))}

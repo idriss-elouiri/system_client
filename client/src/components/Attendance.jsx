@@ -1,6 +1,8 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Attendance = () => {
   const [attendance, setAttendance] = useState([]);
@@ -15,43 +17,42 @@ const Attendance = () => {
     nationality: "سعودي",
     job_title: "",
   });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
+  // دالة لجلب البيانات
+  const fetchData = async (endpoint) => {
+    try {
+      const res = await fetch(`${apiUrl}${endpoint}`);
+      if (!res.ok) {
+        throw new Error("Network response was not ok");
+      }
+      return res.json();
+    } catch (error) {
+      setError(error.message);
+      toast.error("حدث خطأ أثناء جلب البيانات");
+    }
+  };
 
   // جلب جميع سجلات الحضور
   const fetchAttendance = async () => {
-    try {
-      const res = await fetch(`${apiUrl}/api/attendance`);
-      const data = await res.json();
-      setAttendance(data);
-    } catch (error) {
-      console.error("Error fetching attendance:", error);
-    }
+    setLoading(true);
+    const data = await fetchData("/api/attendance");
+    if (data) setAttendance(data);
+    setLoading(false);
   };
 
   // جلب قائمة العمال
   const fetchWorkers = async () => {
-    try {
-      const res = await fetch(`${apiUrl}/api/workers`);
-      const data = await res.json();
-      if (res.ok) {
-        setWorkers(data);
-      }
-    } catch (error) {
-      console.error("Error fetching workers:", error);
-    }
+    const data = await fetchData("/api/workers");
+    if (data) setWorkers(data);
   };
 
   // جلب قائمة المشاريع
   const fetchProjects = async () => {
-    try {
-      const res = await fetch(`${apiUrl}/api/projects`);
-      const data = await res.json();
-      if (res.ok) {
-        setProjects(data);
-      }
-    } catch (error) {
-      console.error("Error fetching projects:", error);
-    }
+    const data = await fetchData("/api/projects");
+    if (data) setProjects(data);
   };
 
   useEffect(() => {
@@ -72,6 +73,7 @@ const Attendance = () => {
       });
       const data = await res.json();
       if (res.ok) {
+        toast.success("تم تسجيل الحضور بنجاح");
         fetchAttendance();
         setFormData({
           worker_id: "",
@@ -82,9 +84,12 @@ const Attendance = () => {
           nationality: "سعودي",
           job_title: "",
         });
+      } else {
+        throw new Error(data.message || "حدث خطأ أثناء تسجيل الحضور");
       }
     } catch (error) {
-      console.error("Error saving attendance:", error);
+      setError(error.message);
+      toast.error(error.message);
     }
   };
 
@@ -102,12 +107,20 @@ const Attendance = () => {
     }
   };
 
+  if (loading) {
+    return <div>جاري التحميل...</div>;
+  }
+
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
+      <ToastContainer />
       <h1 className="text-3xl font-bold mb-6 text-center">إدارة الحضور</h1>
 
       {/* نموذج تسجيل حضور */}
-      <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-md mb-6">
+      <form
+        onSubmit={handleSubmit}
+        className="bg-white p-6 rounded-lg shadow-md mb-6"
+      >
         <h2 className="text-xl font-semibold mb-4">تسجيل حضور جديد</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* قائمة العمال */}

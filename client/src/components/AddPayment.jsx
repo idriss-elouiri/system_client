@@ -2,18 +2,19 @@ import React, { useEffect, useState } from "react";
 
 const AddPayment = ({ onAdd }) => {
   const [amount, setAmount] = useState("");
-  const [projects, setProjects] = useState([]); // قائمة الشركات
-  const [contractors, setContractors] = useState([]); // قائمة المقاولين
-  const [paymentStatus, setPaymentStatus] = useState("Unpaid"); // القيمة الافتراضية بالإنجليزية
+  const [projects, setProjects] = useState([]);
+  const [contractors, setContractors] = useState([]);
+  const [paymentStatus, setPaymentStatus] = useState("Unpaid");
   const [paymentDate, setPaymentDate] = useState("");
-  const [projectId, setProjectId] = useState(""); // إضافة حقل project_id
-  const [contractorId, setContractorId] = useState(""); // معرف المقاول المحدد
+  const [projectId, setProjectId] = useState("");
+  const [contractorId, setContractorId] = useState("");
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
   useEffect(() => {
     fetchProjects();
     fetchContractors();
   }, []);
+
   const fetchContractors = async () => {
     try {
       const res = await fetch(`${apiUrl}/api/contractors`);
@@ -22,9 +23,10 @@ const AddPayment = ({ onAdd }) => {
         setContractors(data);
       }
     } catch (error) {
-      console.error("An error occurred while fetching contractor data:", error);
+      console.error("حدث خطأ أثناء جلب بيانات المقاولين:", error);
     }
   };
+
   const fetchProjects = async () => {
     try {
       const res = await fetch(`${apiUrl}/api/projects`);
@@ -33,14 +35,19 @@ const AddPayment = ({ onAdd }) => {
         setProjects(data);
       }
     } catch (error) {
-      console.error("An error occurred while fetching comown data:", error);
+      console.error("حدث خطأ أثناء جلب بيانات المشاريع:", error);
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!amount || !paymentDate || !projectId || !contractorId) {
+      alert("يرجى ملء جميع الحقول");
+      return;
+    }
+
     try {
-      // تحويل حالة الدفع إلى الإنجليزية
       const statusInEnglish = paymentStatus === "مدفوع" ? "Paid" : "Unpaid";
 
       const res = await fetch(`${apiUrl}/api/payments/create`, {
@@ -48,33 +55,45 @@ const AddPayment = ({ onAdd }) => {
         credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          amount,
-          payment_status: statusInEnglish, // استخدام القيمة المحولة
+          amount: parseFloat(amount) / 100, // تحويل إلى نسبة مئوية حقيقية
+          payment_status: statusInEnglish,
           payment_date: paymentDate,
           project_id: projectId,
           contractor_id: contractorId,
         }),
       });
+
       const data = await res.json();
       if (res.ok) {
-        onAdd(); // تحديث القائمة بعد الإضافة
+        onAdd();
+        setAmount("");
+        setPaymentStatus("Unpaid");
+        setPaymentDate("");
+        setProjectId("");
+        setContractorId("");
+      } else {
+        alert(data.message || "حدث خطأ أثناء إضافة الدفعة");
       }
     } catch (error) {
-      console.error("Error adding payment:", error);
+      console.error("خطأ أثناء إضافة الدفعة:", error);
     }
   };
 
   return (
     <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-md">
       <h3 className="text-xl mb-4">إضافة دفعة جديدة</h3>
+
       <input
         type="number"
         value={amount}
         onChange={(e) => setAmount(e.target.value)}
-        placeholder="المبلغ"
+        placeholder="المبلغ بالنسبة المئوية (%)"
         className="block w-full p-2 mb-4 border border-gray-300 rounded"
+        min="0"
+        max="100"
         required
       />
+
       <select
         value={paymentStatus}
         onChange={(e) => setPaymentStatus(e.target.value)}
@@ -83,6 +102,7 @@ const AddPayment = ({ onAdd }) => {
         <option value="مدفوع">مدفوع</option>
         <option value="غير مدفوع">غير مدفوع</option>
       </select>
+
       <input
         type="date"
         value={paymentDate}
@@ -90,6 +110,7 @@ const AddPayment = ({ onAdd }) => {
         className="block w-full p-2 mb-4 border border-gray-300 rounded"
         required
       />
+
       <select
         value={projectId}
         onChange={(e) => setProjectId(e.target.value)}
@@ -98,12 +119,12 @@ const AddPayment = ({ onAdd }) => {
       >
         <option value="">اختر المشروع</option>
         {projects.map((project) => (
-          <option key={project._id} value={project.project_number}>
+          <option key={project._id} value={project._id}>
             {project.name}
           </option>
         ))}
       </select>
-      {/* قائمة المقاولين */}
+
       <select
         value={contractorId}
         onChange={(e) => setContractorId(e.target.value)}
@@ -116,7 +137,8 @@ const AddPayment = ({ onAdd }) => {
             {contractor.name}
           </option>
         ))}
-      </select>{" "}
+      </select>
+
       <button type="submit" className="bg-green-500 text-white p-2 rounded">
         إضافة
       </button>

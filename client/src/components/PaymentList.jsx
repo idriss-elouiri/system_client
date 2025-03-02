@@ -20,7 +20,6 @@ const PaymentList = () => {
     fetchPayments();
   }, []);
 
-
   // جلب قائمة المدفوعات من الواجهة الخلفية
   const fetchPayments = async () => {
     try {
@@ -45,15 +44,12 @@ const PaymentList = () => {
         project_id: editProjectId,
         contractor_id: editContractorId,
       };
-      const res = await fetch(
-        `${apiUrl}/api/payments/${selectedPayment._id}`,
-        {
-          method: "PUT",
-          credentials: "include",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(updatedData),
-        }
-      );
+      const res = await fetch(`${apiUrl}/api/payments/${selectedPayment._id}`, {
+        method: "PUT",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatedData),
+      });
       const data = await res.json();
       if (res.ok) {
         setShowEditPopup(false);
@@ -68,13 +64,10 @@ const PaymentList = () => {
   // حذف المدفوعات
   const handleDeleteConfirm = async () => {
     try {
-      const res = await fetch(
-        `${apiUrl}/api/payments/${selectedPayment._id}`,
-        {
-          method: "DELETE",
-          credentials: "include",
-        }
-      );
+      const res = await fetch(`${apiUrl}/api/payments/${selectedPayment._id}`, {
+        method: "DELETE",
+        credentials: "include",
+      });
       const data = await res.json();
       if (res.ok) {
         setShowDeletePopup(false);
@@ -127,7 +120,9 @@ const PaymentList = () => {
           <tbody>
             {payments.map((payment) => (
               <tr key={payment._id} className="hover:bg-gray-50">
-                <td className="border p-3">{payment.amount}</td>
+                <td className="border p-3">
+                  <p>{payment.amount * 100}%</p>
+                </td>
                 <td className="border p-3">{payment.payment_status}</td>
                 <td className="border p-3">
                   {new Date(payment.payment_date).toLocaleDateString()}

@@ -4,8 +4,8 @@ import React, { useState, useEffect } from "react";
 
 const Workers = () => {
   const [workers, setWorkers] = useState([]);
-  const [contractors, setContractors] = useState([]); // قائمة المقاولين
-  const [projects, setProjects] = useState([]); // قائمة المشاريع
+  const [contractors, setContractors] = useState([]); 
+  const [projects, setProjects] = useState([]); 
   const [formData, setFormData] = useState({
     name: "",
     contractor_id: "",
@@ -18,7 +18,12 @@ const Workers = () => {
   const [selectedWorker, setSelectedWorker] = useState(null);
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
-  // جلب جميع العمال
+  useEffect(() => {
+    fetchWorkers();
+    fetchContractors();
+    fetchProjects();
+  }, []);
+
   const fetchWorkers = async () => {
     try {
       const res = await fetch(`${apiUrl}/api/workers`);
@@ -31,7 +36,6 @@ const Workers = () => {
     }
   };
 
-  // جلب قائمة المقاولين
   const fetchContractors = async () => {
     try {
       const res = await fetch(`${apiUrl}/api/contractors`);
@@ -44,7 +48,6 @@ const Workers = () => {
     }
   };
 
-  // جلب قائمة المشاريع
   const fetchProjects = async () => {
     try {
       const res = await fetch(`${apiUrl}/api/projects`);
@@ -57,31 +60,21 @@ const Workers = () => {
     }
   };
 
-  useEffect(() => {
-    fetchWorkers();
-    fetchContractors();
-    fetchProjects();
-  }, []);
-
-  // إضافة أو تحديث عامل
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      if (editMode) {
-        await fetch(`${apiUrl}/api/workers/${selectedWorker._id}`, {
-          method: "PUT",
-          credentials: "include",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(formData),
-        });
-      } else {
-        await fetch(`${apiUrl}/api/workers`, {
-          method: "POST",
-          credentials: "include",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(formData),
-        });
-      }
+      const method = editMode ? "PUT" : "POST";
+      const url = editMode
+        ? `${apiUrl}/api/workers/${selectedWorker._id}`
+        : `${apiUrl}/api/workers`;
+
+      await fetch(url, {
+        method,
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
       fetchWorkers();
       setFormData({
         name: "",
@@ -97,7 +90,6 @@ const Workers = () => {
     }
   };
 
-  // حذف عامل
   const handleDelete = async (id) => {
     try {
       await fetch(`${apiUrl}/api/workers/${id}`, {
@@ -109,7 +101,6 @@ const Workers = () => {
     }
   };
 
-  // تعبئة النموذج للتعديل
   const handleEdit = (worker) => {
     setFormData(worker);
     setEditMode(true);
@@ -120,7 +111,6 @@ const Workers = () => {
     <div className="p-6 bg-gray-100 min-h-screen">
       <h1 className="text-3xl font-bold mb-6 text-center">إدارة العمال</h1>
 
-      {/* نموذج إضافة/تعديل عامل */}
       <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-md mb-6">
         <h2 className="text-xl font-semibold mb-4">
           {editMode ? "تعديل عامل" : "إضافة عامل جديد"}
@@ -134,7 +124,6 @@ const Workers = () => {
             className="p-2 border rounded"
             required
           />
-          {/* قائمة المقاولين */}
           <select
             value={formData.contractor_id}
             onChange={(e) =>
@@ -150,7 +139,6 @@ const Workers = () => {
               </option>
             ))}
           </select>
-          {/* قائمة المشاريع */}
           <select
             value={formData.project_id}
             onChange={(e) =>
@@ -172,10 +160,7 @@ const Workers = () => {
             onChange={(e) =>
               setFormData({
                 ...formData,
-                contact_info: {
-                  ...formData.contact_info,
-                  email: e.target.value,
-                },
+                contact_info: { ...formData.contact_info, email: e.target.value },
               })
             }
             placeholder="البريد الإلكتروني (اختياري)"
@@ -187,10 +172,7 @@ const Workers = () => {
             onChange={(e) =>
               setFormData({
                 ...formData,
-                contact_info: {
-                  ...formData.contact_info,
-                  phone: e.target.value,
-                },
+                contact_info: { ...formData.contact_info, phone: e.target.value },
               })
             }
             placeholder="رقم الهاتف"
@@ -207,65 +189,39 @@ const Workers = () => {
             className="p-2 border rounded"
             required
           />
-          <select
-            value={formData.nationality}
-            onChange={(e) =>
-              setFormData({ ...formData, nationality: e.target.value })
-            }
-            className="p-2 border rounded"
-          >
-            <option value="سعودي">سعودي</option>
-            <option value="غير سعودي">غير سعودي</option>
-          </select>
         </div>
-        <button
-          type="submit"
-          className="mt-4 bg-blue-500 text-white px-4 py-2 rounded"
-        >
+        <button type="submit" className="mt-4 bg-blue-500 text-white px-4 py-2 rounded">
           {editMode ? "تحديث" : "إضافة"}
         </button>
       </form>
 
-      {/* عرض قائمة العمال */}
       <div className="bg-white p-6 rounded-lg shadow-md">
         <h2 className="text-xl font-semibold mb-4">قائمة العمال</h2>
-        <div className="overflow-x-auto">
-          <table className="w-full border-collapse">
-            <thead>
-              <tr className="bg-gray-200">
-                <th className="p-3 text-left">الاسم</th>
-                <th className="p-3 text-left">المسمى الوظيفي</th>
-                <th className="p-3 text-left">الجنسية</th>
-                <th className="p-3 text-left">الهاتف</th>
-                <th className="p-3 text-left">الإجراءات</th>
+        <table className="w-full border-collapse">
+          <thead>
+            <tr className="bg-gray-200">
+              <th className="p-3 text-left">الاسم</th>
+              <th className="p-3 text-left">المسمى الوظيفي</th>
+              <th className="p-3 text-left">الجنسية</th>
+              <th className="p-3 text-left">الهاتف</th>
+              <th className="p-3 text-left">الإجراءات</th>
+            </tr>
+          </thead>
+          <tbody>
+            {workers.map((worker) => (
+              <tr key={worker._id} className="border-b hover:bg-gray-50">
+                <td className="p-3">{worker.name}</td>
+                <td className="p-3">{worker.job_title}</td>
+                <td className="p-3">{worker.nationality}</td>
+                <td className="p-3">{worker.contact_info.phone}</td>
+                <td className="p-3">
+                  <button onClick={() => handleEdit(worker)} className="bg-yellow-500 text-white px-3 py-1 rounded mr-2">تعديل</button>
+                  <button onClick={() => handleDelete(worker._id)} className="bg-red-500 text-white px-3 py-1 rounded">حذف</button>
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              {workers.map((worker) => (
-                <tr key={worker._id} className="border-b hover:bg-gray-50">
-                  <td className="p-3">{worker.name}</td>
-                  <td className="p-3">{worker.job_title}</td>
-                  <td className="p-3">{worker.nationality}</td>
-                  <td className="p-3">{worker.contact_info.phone}</td>
-                  <td className="p-3">
-                    <button
-                      onClick={() => handleEdit(worker)}
-                      className="bg-yellow-500 text-white px-3 py-1 rounded mr-2"
-                    >
-                      تعديل
-                    </button>
-                    <button
-                      onClick={() => handleDelete(worker._id)}
-                      className="bg-red-500 text-white px-3 py-1 rounded"
-                    >
-                      حذف
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );
