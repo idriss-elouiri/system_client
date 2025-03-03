@@ -18,11 +18,6 @@ const workerSchema = new mongoose.Schema(
       phone: { type: String, required: true }, // رقم الهاتف
     },
     job_title: { type: String, required: true }, // المسمى الوظيفي
-    nationality: {
-      type: String,
-      enum: ["سعودي", "غير سعودي"],
-      required: true,
-    }, // الجنسية
   },
   { timestamps: true } // إضافة created_at و updated_at تلقائيًا
 );

@@ -15,15 +15,16 @@ const attendanceSchema = new mongoose.Schema(
     date: { type: Date, required: true }, // تاريخ الحضور
     status: {
       type: String,
-      enum: ["حاضر", "غائب"],
+      enum: ["Present", "Absent"],
       required: true,
-    }, // حالة الحضور
-    worker_name: { type: String, required: true }, // اسم العامل
+    },
     nationality: {
       type: String,
-      enum: ["سعودي", "غير سعودي"],
+      enum: ["Saudi", "Non-Saudi"],
       required: true,
-    }, // الجنسية
+    },
+
+    worker_name: { type: String, required: true }, // اسم العامل
     job_title: { type: String, required: true }, // المسمى الوظيفي
   },
   { timestamps: true } // إضافة created_at و updated_at تلقائيًا

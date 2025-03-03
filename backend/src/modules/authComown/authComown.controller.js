@@ -56,10 +56,34 @@ export const loginHandler = async (req, res, next) => {
   }
 };
 
-export const getHandler = async (req, res, next) => {
+export const getComowns = async (req, res, next) => {
   try {
     const comowns = await Comown.find();
     res.json(comowns);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const updateComown = async (req, res, next) => {
+  try {
+    const comown = await Comown.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    if (!comown) {
+      return res.status(404).json({ message: "Comown not found" });
+    }
+    res.json({ message: "Comown updated successfully", comown });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const deleteComown = async (req, res, next) => {
+  try {
+    const comown = await Comown.findByIdAndDelete(req.params.id);
+    if (!comown) {
+      return res.status(404).json({ message: "Comown not found" });
+    }
+    res.json({ message: "Comown deleted successfully" });
   } catch (error) {
     next(error);
   }
