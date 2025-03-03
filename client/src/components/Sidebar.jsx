@@ -2,28 +2,19 @@ import Link from "next/link";
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import {
-  FaBattleNet,
-  FaNetworkWired,
-  FaPlayCircle,
-  FaRProject,
   FaTachometerAlt,
+  FaUserTie,
+  FaProjectDiagram,
+  FaMoneyBillWave,
+  FaUsers,
+  FaClipboardCheck,
 } from "react-icons/fa";
-import { MdPeople } from "react-icons/md"; // HRM Icon
 
 const Sidebar = ({ showNav, onClose }) => {
   const { currentUser } = useSelector((state) => state.user);
   const isAdmin = currentUser?.isAdmin;
-
-  // State to toggle children visibility
-  const [showCustomerSubmenu, setShowCustomerSubmenu] = useState(false);
-  const [showSuppliberSubmenu, setShowSuppliberSubmenu] = useState(false);
-
-  const toggleCustomerSubmenu = () => {
-    setShowCustomerSubmenu((prev) => !prev);
-  };
-  const toggleSupplierSubmenu = () => {
-    setShowSuppliberSubmenu((prev) => !prev);
-  };
+  const isOwnerAd = currentUser?.isComown;
+  const isContractor = currentUser?.isContractor;
 
   return (
     <aside
@@ -40,62 +31,71 @@ const Sidebar = ({ showNav, onClose }) => {
         &times;
       </button>
       <div className="flex items-center mb-8 gap-2">
-        <h2 className="text-xl font-semibold">النظام</h2>
+        <h2 className="text-xl font-semibold">System</h2>
       </div>
       <nav className="space-y-4">
         {/* Main Menu */}
-        {isAdmin && (
+        {isOwnerAd && (
           <Link
-            href="/dashboard"
+            href="/dashboardOwn"
             className="flex items-center block p-2 rounded hover:bg-indigo-700"
           >
             <FaTachometerAlt className="mr-2" />
-            لوحة التحكم
+            Dashboard Owner
           </Link>
         )}
         {isAdmin && (
+          <Link
+            href="/dashboardAdm"
+            className="flex items-center block p-2 rounded hover:bg-indigo-700"
+          >
+            <FaTachometerAlt className="mr-2" />
+            Dashboard Admin
+          </Link>
+        )}
+        {(isAdmin || isOwnerAd) && (
           <Link
             href="/ContractorManagement"
             className="flex items-center block p-2 rounded hover:bg-indigo-700"
           >
-            <MdPeople className="mr-2" />
-            قسم المقاولين
+            <FaUserTie className="mr-2" />
+            Contractor Management
           </Link>
         )}
-        {isAdmin && (
+        {(isAdmin || isOwnerAd || isContractor) && (
           <Link
             href="/projectsPage"
             className="flex items-center block p-2 rounded hover:bg-indigo-700"
           >
-            <FaRProject className="mr-2" />
-            قسم المشاريع
+            <FaProjectDiagram className="mr-2" />
+            Projects
           </Link>
         )}
-        {isAdmin && (
+        {(isAdmin || isOwnerAd || isContractor) && (
           <Link
             href="/PaymentsPage"
             className="flex items-center block p-2 rounded hover:bg-indigo-700"
           >
-            <FaPlayCircle className="mr-2" />
-            قسم المدفوعات
+            <FaMoneyBillWave className="mr-2" />
+            Payments
           </Link>
         )}
-        {isAdmin && (
+        {(isAdmin || isOwnerAd || isContractor) && (
           <Link
             href="/workers"
             className="flex items-center block p-2 rounded hover:bg-indigo-700"
           >
-            <FaNetworkWired className="mr-2" />
-            العمال{" "}
+            <FaUsers className="mr-2" />
+            Workers
           </Link>
         )}
-        {isAdmin && (
+        {(isAdmin || isOwnerAd || isContractor) && (
           <Link
             href="/attendance"
             className="flex items-center block p-2 rounded hover:bg-indigo-700"
           >
-            <FaBattleNet className="mr-2" />
-            الحضور{" "}
+            <FaClipboardCheck className="mr-2" />
+            Attendance
           </Link>
         )}
       </nav>

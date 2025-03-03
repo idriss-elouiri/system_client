@@ -60,14 +60,21 @@ const LoginForm = ({ role }) => {
       dispatch(signInSuccess(data));
 
       // تحديد الصفحة التي سيتم التوجيه إليها
-      router.push(`/${role}Dashboard`);
+      if (data.isAdmin) {
+        router.push(`/dashboardAdm`);
+      } else if (data.isComown) {
+        router.push(`/dashboardOwn`);
+      }
     } catch (error) {
       dispatch(signInFailure(error.message));
     }
   };
 
   return (
-    <div dir="rtl" className="min-h-screen flex items-center justify-center py-10">
+    <div
+      dir="rtl"
+      className="min-h-screen flex items-center justify-center py-10"
+    >
       <div className="flex w-full max-w-6xl bg-white rounded-lg shadow-lg overflow-hidden">
         <div className="w-full lg:w-1/2 px-6 py-8">
           <h2 className="text-3xl font-semibold text-center mb-6">
@@ -94,7 +101,10 @@ const LoginForm = ({ role }) => {
               />
             </div>
             <div className="mb-4">
-              <label className="block text-lg font-medium mb-2" htmlFor="password">
+              <label
+                className="block text-lg font-medium mb-2"
+                htmlFor="password"
+              >
                 Password
               </label>
               <input

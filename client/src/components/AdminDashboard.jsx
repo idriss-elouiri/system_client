@@ -9,26 +9,23 @@ import { FaEdit, FaTrash } from "react-icons/fa";
 
 Chart.register(...registerables);
 
-const CompanyDashboard = () => {
+const AdminDashboard = () => {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-  const [contractors, setContractors] = useState([]);
+  const [comowns, setComowns] = useState([]);
   const [projects, setProjects] = useState([]);
-  const [attendanceReports, setAttendanceReports] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [contractorsRes, projectsRes, reportsRes] = await Promise.all([
-          fetch(`${apiUrl}/api/contractors`).then((res) => res.json()),
+        const [comownsRes, projectsRes] = await Promise.all([
+          fetch(`${apiUrl}/api/authComown`).then((res) => res.json()),
           fetch(`${apiUrl}/api/projects`).then((res) => res.json()),
-          fetch(`${apiUrl}/api/attendance`).then((res) => res.json()),
         ]);
 
-        setContractors(contractorsRes);
+        setComowns(comownsRes);
         setProjects(projectsRes);
-        setAttendanceReports(reportsRes);
       } catch (err) {
         setError("An error occurred while fetching data");
         toast.error("An error occurred while fetching data");
@@ -41,17 +38,12 @@ const CompanyDashboard = () => {
   }, [apiUrl]);
 
   const chartData = {
-    labels: attendanceReports?.map((report) => report.project_name),
+    labels: projects?.map((project) => project.name),
     datasets: [
       {
-        label: "Attendance",
-        data: attendanceReports?.map((report) => report.attendance_count),
+        label: "Projects",
+        data: projects?.map((project) => project.status === "Active" ? 1 : 0),
         backgroundColor: "rgba(75, 192, 192, 0.6)",
-      },
-      {
-        label: "Absence",
-        data: attendanceReports?.map((report) => report.absence_count),
-        backgroundColor: "rgba(255, 99, 132, 0.6)",
       },
     ],
   };
@@ -63,27 +55,27 @@ const CompanyDashboard = () => {
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
       <ToastContainer />
-      <h1 className="text-3xl font-bold mb-6 text-center">Company Owner Dashboard</h1>
+      <h1 className="text-3xl font-bold mb-6 text-center">Admin Dashboard</h1>
 
-      {/* Contractor Management */}
+      {/* Comown Management */}
       <div className="bg-white p-6 rounded-lg shadow-md mb-6">
-        <h2 className="text-xl font-semibold mb-4">Contractor Management</h2>
+        <h2 className="text-xl font-semibold mb-4">Comown Management</h2>
         <div className="overflow-x-auto">
           <table className="w-full border-collapse">
             <thead>
               <tr className="bg-gray-200">
                 <th className="p-3 text-left">Name</th>
                 <th className="p-3 text-left">Email</th>
-                <th className="p-3 text-left">Phone</th>
+                <th className="p-3 text-left">Company ID</th>
                 <th className="p-3 text-left">Actions</th>
               </tr>
             </thead>
             <tbody>
-              {contractors?.map((contractor) => (
-                <tr key={contractor._id} className="border-b hover:bg-gray-50">
-                  <td className="p-3">{contractor.name}</td>
-                  <td className="p-3">{contractor.email}</td>
-                  <td className="p-3">{contractor.phoneNumber}</td>
+              {comowns?.map((comown) => (
+                <tr key={comown._id} className="border-b hover:bg-gray-50">
+                  <td className="p-3">{comown.name}</td>
+                  <td className="p-3">{comown.email}</td>
+                  <td className="p-3">{comown.companyId}</td>
                   <td className="p-3">
                     <button className="text-blue-500 hover:text-blue-700 mr-2">
                       <FaEdit />
@@ -133,9 +125,9 @@ const CompanyDashboard = () => {
         </div>
       </div>
 
-      {/* Attendance Reports */}
+      {/* Project Status Chart */}
       <div className="bg-white p-6 rounded-lg shadow-md">
-        <h2 className="text-xl font-semibold mb-4">Attendance Reports</h2>
+        <h2 className="text-xl font-semibold mb-4">Project Status</h2>
         <div className="w-full h-96">
           <Bar data={chartData} options={{ responsive: true }} />
         </div>
@@ -144,4 +136,4 @@ const CompanyDashboard = () => {
   );
 };
 
-export default CompanyDashboard;
+export default AdminDashboard;

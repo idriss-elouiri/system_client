@@ -23,7 +23,7 @@ const AddPayment = ({ onAdd }) => {
         setContractors(data);
       }
     } catch (error) {
-      console.error("حدث خطأ أثناء جلب بيانات المقاولين:", error);
+      console.error("An error occurred while fetching contractors' data:", error);
     }
   };
 
@@ -35,7 +35,7 @@ const AddPayment = ({ onAdd }) => {
         setProjects(data);
       }
     } catch (error) {
-      console.error("حدث خطأ أثناء جلب بيانات المشاريع:", error);
+      console.error("An error occurred while fetching projects' data:", error);
     }
   };
 
@@ -43,19 +43,19 @@ const AddPayment = ({ onAdd }) => {
     e.preventDefault();
 
     if (!amount || !paymentDate || !projectId || !contractorId) {
-      alert("يرجى ملء جميع الحقول");
+      alert("Please fill in all fields");
       return;
     }
 
     try {
-      const statusInEnglish = paymentStatus === "مدفوع" ? "Paid" : "Unpaid";
+      const statusInEnglish = paymentStatus === "Paid" ? "Paid" : "Unpaid";
 
       const res = await fetch(`${apiUrl}/api/payments/create`, {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          amount: parseFloat(amount) / 100, // تحويل إلى نسبة مئوية حقيقية
+          amount: parseFloat(amount) / 100, // Convert to actual percentage
           payment_status: statusInEnglish,
           payment_date: paymentDate,
           project_id: projectId,
@@ -72,22 +72,22 @@ const AddPayment = ({ onAdd }) => {
         setProjectId("");
         setContractorId("");
       } else {
-        alert(data.message || "حدث خطأ أثناء إضافة الدفعة");
+        alert(data.message || "An error occurred while adding the payment");
       }
     } catch (error) {
-      console.error("خطأ أثناء إضافة الدفعة:", error);
+      console.error("Error while adding the payment:", error);
     }
   };
 
   return (
     <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-md">
-      <h3 className="text-xl mb-4">إضافة دفعة جديدة</h3>
+      <h3 className="text-xl mb-4">Add New Payment</h3>
 
       <input
         type="number"
         value={amount}
         onChange={(e) => setAmount(e.target.value)}
-        placeholder="المبلغ بالنسبة المئوية (%)"
+        placeholder="Amount in percentage (%)"
         className="block w-full p-2 mb-4 border border-gray-300 rounded"
         min="0"
         max="100"
@@ -99,8 +99,8 @@ const AddPayment = ({ onAdd }) => {
         onChange={(e) => setPaymentStatus(e.target.value)}
         className="block w-full p-2 mb-4 border border-gray-300 rounded"
       >
-        <option value="مدفوع">مدفوع</option>
-        <option value="غير مدفوع">غير مدفوع</option>
+        <option value="Paid">Paid</option>
+        <option value="Unpaid">Unpaid</option>
       </select>
 
       <input
@@ -117,7 +117,7 @@ const AddPayment = ({ onAdd }) => {
         className="block w-full p-2 mb-4 border border-gray-300 rounded"
         required
       >
-        <option value="">اختر المشروع</option>
+        <option value="">Select Project</option>
         {projects.map((project) => (
           <option key={project._id} value={project._id}>
             {project.name}
@@ -131,7 +131,7 @@ const AddPayment = ({ onAdd }) => {
         className="block w-full p-2 mb-4 border border-gray-300 rounded"
         required
       >
-        <option value="">اختر المقاول</option>
+        <option value="">Select Contractor</option>
         {contractors.map((contractor) => (
           <option key={contractor._id} value={contractor._id}>
             {contractor.name}
@@ -140,7 +140,7 @@ const AddPayment = ({ onAdd }) => {
       </select>
 
       <button type="submit" className="bg-green-500 text-white p-2 rounded">
-        إضافة
+        Add
       </button>
     </form>
   );

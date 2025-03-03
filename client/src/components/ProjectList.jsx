@@ -24,7 +24,7 @@ const ProjectList = () => {
     fetchProjects();
   }, []);
 
-  // جلب قائمة المشاريع من الواجهة الخلفية
+  // Fetch project list from the backend
   const fetchProjects = async () => {
     try {
       const res = await fetch(`${apiUrl}/api/projects`);
@@ -35,7 +35,7 @@ const ProjectList = () => {
     }
   };
 
-  // تحديث المشروع
+  // Update project
   const handleUpdate = async (e) => {
     e.preventDefault();
     try {
@@ -70,7 +70,7 @@ const ProjectList = () => {
     }
   };
 
-  // حذف المشروع
+  // Delete project
   const handleDeleteConfirm = async () => {
     try {
       const res = await fetch(
@@ -91,7 +91,7 @@ const ProjectList = () => {
     }
   };
 
-  // فتح نافذة التعديل
+  // Open edit popup
   const handleEditClick = (project) => {
     setSelectedProject(project);
     setEditName(project.name);
@@ -106,7 +106,7 @@ const ProjectList = () => {
     setShowEditPopup(true);
   };
 
-  // فتح نافذة تأكيد الحذف
+  // Open delete confirmation popup
   const handleDeleteClick = (project) => {
     setSelectedProject(project);
     setShowDeletePopup(true);
@@ -114,27 +114,27 @@ const ProjectList = () => {
 
   return (
     <div className="container mx-auto p-6">
-      <h2 className="text-3xl font-bold mb-8 text-center">إدارة المشاريع</h2>
-      {/* نموذج إضافة مشروع */}
+      <h2 className="text-3xl font-bold mb-8 text-center">Project Management</h2>
+      {/* Add Project Form */}
       <div className="mb-8">
         <AddProject onAdd={fetchProjects} />
       </div>
 
-      {/* عرض قائمة المشاريع */}
+      {/* Display Project List */}
       <div className="bg-white shadow-lg rounded-lg p-6 overflow-x-auto">
         <table className="w-full border-collapse border border-gray-200">
           <thead className="bg-gray-100">
             <tr>
-              <th className="border p-3 text-left">اسم المشروع</th>
-              <th className="border p-3 text-left">رقم المشروع</th>
-              <th className="border p-3 text-left">تاريخ البدء</th>
-              <th className="border p-3 text-left">تاريخ الانتهاء</th>
-              <th className="border p-3 text-left">الحالة</th>
-              <th className="border p-3 text-left">الموقع</th>
-              <th className="border p-3 text-left">الموقع المعين</th>
-              <th className="border p-3 text-left">معرف الشركة</th>
-              <th className="border p-3 text-left">معرف المقاول</th>
-              <th className="border p-3 text-left">الإجراءات</th>
+              <th className="border p-3 text-left">Project Name</th>
+              <th className="border p-3 text-left">Project Number</th>
+              <th className="border p-3 text-left">Start Date</th>
+              <th className="border p-3 text-left">End Date</th>
+              <th className="border p-3 text-left">Status</th>
+              <th className="border p-3 text-left">Location</th>
+              <th className="border p-3 text-left">Assigned Location</th>
+              <th className="border p-3 text-left">Company ID</th>
+              <th className="border p-3 text-left">Contractor ID</th>
+              <th className="border p-3 text-left">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -155,13 +155,13 @@ const ProjectList = () => {
                       onClick={() => handleEditClick(project)}
                       className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition"
                     >
-                      تعديل
+                      Edit
                     </button>
                     <button
                       onClick={() => handleDeleteClick(project)}
                       className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition"
                     >
-                      حذف
+                      Delete
                     </button>
                   </div>
                 </td>
@@ -170,155 +170,6 @@ const ProjectList = () => {
           </tbody>
         </table>
       </div>
-
-      {/* نافذة تعديل المشروع */}
-      {showEditPopup && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-xl p-6 w-96">
-            <h3 className="text-2xl font-semibold mb-4 text-center">
-              تعديل بيانات المشروع
-            </h3>
-            <form onSubmit={handleUpdate} className="space-y-4">
-              <div>
-                <label className="block text-gray-700">اسم المشروع:</label>
-                <input
-                  type="text"
-                  value={editName}
-                  onChange={(e) => setEditName(e.target.value)}
-                  required
-                  className="w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:border-blue-300"
-                />
-              </div>
-              <div>
-                <label className="block text-gray-700">رقم المشروع:</label>
-                <input
-                  type="text"
-                  value={editProjectNumber}
-                  onChange={(e) => setEditProjectNumber(e.target.value)}
-                  required
-                  className="w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:border-blue-300"
-                />
-              </div>
-              <div>
-                <label className="block text-gray-700">تاريخ البدء:</label>
-                <input
-                  type="date"
-                  value={editStartDate}
-                  onChange={(e) => setEditStartDate(e.target.value)}
-                  required
-                  className="w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:border-blue-300"
-                />
-              </div>
-              <div>
-                <label className="block text-gray-700">تاريخ الانتهاء:</label>
-                <input
-                  type="date"
-                  value={editEndDate}
-                  onChange={(e) => setEditEndDate(e.target.value)}
-                  required
-                  className="w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:border-blue-300"
-                />
-              </div>
-              <div>
-                <label className="block text-gray-700">الحالة:</label>
-                <select
-                  value={editStatus}
-                  onChange={(e) => setEditStatus(e.target.value)}
-                  className="w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:border-blue-300"
-                >
-                  <option value="Active">نشط</option>
-                  <option value="Expired">منتهي</option>
-                  <option value="Completed">مكتمل</option>
-                </select>
-              </div>
-              <div>
-                <label className="block text-gray-700">الموقع:</label>
-                <input
-                  type="text"
-                  value={editLocation}
-                  onChange={(e) => setEditLocation(e.target.value)}
-                  required
-                  className="w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:border-blue-300"
-                />
-              </div>
-              <div>
-                <label className="block text-gray-700">الموقع المعين:</label>
-                <input
-                  type="text"
-                  value={editAssignedLocation}
-                  onChange={(e) => setEditAssignedLocation(e.target.value)}
-                  required
-                  className="w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:border-blue-300"
-                />
-              </div>
-              <div>
-                <label className="block text-gray-700">معرف الشركة:</label>
-                <input
-                  type="text"
-                  value={editCompanyId}
-                  onChange={(e) => setEditCompanyId(e.target.value)}
-                  required
-                  className="w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:border-blue-300"
-                />
-              </div>
-              <div>
-                <label className="block text-gray-700">معرف المقاول:</label>
-                <input
-                  type="text"
-                  value={editContractorId}
-                  onChange={(e) => setEditContractorId(e.target.value)}
-                  required
-                  className="w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:border-blue-300"
-                />
-              </div>
-              <div className="flex justify-end space-x-3">
-                <button
-                  type="button"
-                  onClick={() => setShowEditPopup(false)}
-                  className="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400 transition"
-                >
-                  إلغاء
-                </button>
-                <button
-                  type="submit"
-                  className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition"
-                >
-                  حفظ التغييرات
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* نافذة تأكيد الحذف */}
-      {showDeletePopup && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-xl p-6 w-96">
-            <h3 className="text-2xl font-semibold mb-4 text-center">
-              تأكيد الحذف
-            </h3>
-            <p className="mb-6 text-center">
-              هل أنت متأكد من حذف المشروع:{" "}
-              <span className="font-bold">{selectedProject.name}</span>؟
-            </p>
-            <div className="flex justify-end space-x-3">
-              <button
-                onClick={() => setShowDeletePopup(false)}
-                className="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400 transition"
-              >
-                إلغاء
-              </button>
-              <button
-                onClick={handleDeleteConfirm}
-                className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition"
-              >
-                نعم، حذف
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

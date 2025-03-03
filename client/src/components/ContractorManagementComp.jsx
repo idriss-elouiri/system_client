@@ -14,7 +14,7 @@ const ContractorManagementComp = () => {
   const [editPassword, setEditPassword] = useState("");
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
-  // جلب بيانات المقاولين عند تحميل المكون
+  // Fetch contractor data when the component loads
   useEffect(() => {
     fetchContractors();
   }, []);
@@ -49,7 +49,7 @@ const ContractorManagementComp = () => {
   const handleUpdate = async (e) => {
     e.preventDefault();
     try {
-      const updatedData = { id: editId, name: editName, email: editEmail, phoneNumber: editPhoneNumber , password: editPassword };
+      const updatedData = { id: editId, name: editName, email: editEmail, phoneNumber: editPhoneNumber, password: editPassword };
       const res = await fetch(
         `${apiUrl}/api/contractors/${selectedContractor._id}`,
         {
@@ -92,14 +92,13 @@ const ContractorManagementComp = () => {
 
   return (
     <div className="container mx-auto p-6">
-      <h2 className="text-3xl font-bold mb-8 text-center">Mangement Contractor</h2>
-      {/* نموذج إضافة مقاول */}
+      <h2 className="text-3xl font-bold mb-8 text-center">Contractor Management</h2>
+      {/* Add Contractor Form */}
       <div className="mb-8">
         <AddContractor onAdd={fetchContractors} />
       </div>
 
-      {/* عرض قائمة المقاولين */}
-      <div className="bg-white shadow-lg rounded-lg p-6">
+      {/* Contractor List Display */}
       <div className="bg-white shadow-lg rounded-lg p-6 overflow-x-auto">
         <table className="w-full border-collapse border border-gray-200">
           <thead className="bg-gray-100">
@@ -119,131 +118,26 @@ const ContractorManagementComp = () => {
                 <td className="border p-3">{contractor.phoneNumber || "N/A"}</td>
                 <td className="border p-3">{contractor.email}</td>
                 <td className="border p-3">
-                <div className="space-x-2 flex">
-                <button
-                  onClick={() => handleEditClick(contractor)}
-                  className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition"
-                >
-                  تعديل
-                </button>
-                <button
-                  onClick={() => handleDeleteClick(contractor)}
-                  className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition"
-                >
-                  حذف
-                </button>
-              </div>
+                  <div className="space-x-2 flex">
+                    <button
+                      onClick={() => handleEditClick(contractor)}
+                      className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => handleDeleteClick(contractor)}
+                      className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition"
+                    >
+                      Delete
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
-      </div>
-
-      {/* نافذة تعديل المقاول */}
-      {showEditPopup && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-xl p-6 w-96">
-            <h3 className="text-2xl font-semibold mb-4 text-center">
-              تعديل بيانات المقاول
-            </h3>
-            <form onSubmit={handleUpdate} className="space-y-4">
-              <div>
-                <label className="block text-gray-700">Id:</label>
-                <input
-                  type="text"
-                  value={editId}
-                  onChange={(e) => setEditId(e.target.value)}
-                  required
-                  className="w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:border-blue-300"
-                />
-              </div>
-              <div>
-                <label className="block text-gray-700">Name:</label>
-                <input
-                  type="text"
-                  value={editName}
-                  onChange={(e) => setEditName(e.target.value)}
-                  required
-                  className="w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:border-blue-300"
-                />
-              </div>
-              <div>
-                <label className="block text-gray-700">Phone Number (optional):</label>
-                <input
-                  type="text"
-                  value={editPhoneNumber}
-                  onChange={(e) => setEditPhoneNumber(e.target.value)}
-                  className="w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:border-blue-300"
-                />
-              </div>
-              <div>
-                <label className="block text-gray-700">Email:</label>
-                <input
-                  type="text"
-                  value={editEmail}
-                  onChange={(e) => setEditEmail(e.target.value)}
-                  className="w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:border-blue-300"
-                />
-              </div>
-              <div>
-                <label className="block text-gray-700">Password:</label>
-                <input
-                  type="text"
-                  value={editPassword}
-                  onChange={(e) => setEditPassword(e.target.value)}
-                  className="w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:border-blue-300"
-                />
-              </div>
-              <div className="flex justify-end space-x-3">
-                <button
-                  type="button"
-                  onClick={() => setShowEditPopup(false)}
-                  className="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400 transition"
-                >
-                  إلغاء
-                </button>
-                <button
-                  type="submit"
-                  className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition"
-                >
-                  حفظ التغييرات
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* نافذة تأكيد الحذف */}
-      {showDeletePopup && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-xl p-6 w-96">
-            <h3 className="text-2xl font-semibold mb-4 text-center">
-              تأكيد الحذف
-            </h3>
-            <p className="mb-6 text-center">
-              هل أنت متأكد من حذف المقاول:{" "}
-              <span className="font-bold">{selectedContractor.name}</span>؟
-            </p>
-            <div className="flex justify-end space-x-3">
-              <button
-                onClick={() => setShowDeletePopup(false)}
-                className="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400 transition"
-              >
-                إلغاء
-              </button>
-              <button
-                onClick={handleDeleteConfirm}
-                className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition"
-              >
-                نعم، حذف
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

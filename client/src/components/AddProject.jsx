@@ -1,26 +1,26 @@
 import React, { useEffect, useState } from "react";
 
 const AddProject = ({ onAdd }) => {
-  const [contractors, setContractors] = useState([]); // قائمة المقاولين
-  const [comowns, setComowns] = useState([]); // قائمة الشركات
+  const [contractors, setContractors] = useState([]); // List of contractors
+  const [companies, setCompanies] = useState([]); // List of companies
   const [name, setName] = useState("");
   const [location, setLocation] = useState("");
   const [assignedLocation, setAssignedLocation] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  const [status, setStatus] = useState("Active"); // حالة المشروع
-  const [projectNumber, setProjectNumber] = useState(""); // رقم المشروع
-  const [companyId, setCompanyId] = useState(""); // معرف الشركة المحدد
-  const [contractorId, setContractorId] = useState(""); // معرف المقاول المحدد
+  const [status, setStatus] = useState("Active"); // Project status
+  const [projectNumber, setProjectNumber] = useState(""); // Project number
+  const [companyId, setCompanyId] = useState(""); // Selected company ID
+  const [contractorId, setContractorId] = useState(""); // Selected contractor ID
 
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
   useEffect(() => {
     fetchContractors();
-    fetchComowns();
+    fetchCompanies();
   }, []);
 
-  // جلب قائمة المقاولين من الواجهة الخلفية
+  // Fetch the list of contractors from the backend
   const fetchContractors = async () => {
     try {
       const res = await fetch(`${apiUrl}/api/contractors`);
@@ -33,20 +33,20 @@ const AddProject = ({ onAdd }) => {
     }
   };
 
-  // جلب قائمة الشركات من الواجهة الخلفية
-  const fetchComowns = async () => {
+  // Fetch the list of companies from the backend
+  const fetchCompanies = async () => {
     try {
       const res = await fetch(`${apiUrl}/api/authComown`);
       const data = await res.json();
       if (res.ok) {
-        setComowns(data);
+        setCompanies(data);
       }
     } catch (error) {
-      console.error("An error occurred while fetching comown data:", error);
+      console.error("An error occurred while fetching company data:", error);
     }
   };
 
-  // إرسال البيانات إلى الواجهة الخلفية
+  // Submit data to the backend
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -68,7 +68,7 @@ const AddProject = ({ onAdd }) => {
       });
       const data = await res.json();
       if (res.ok) {
-        onAdd(); // استدعاء الدالة لتحديث قائمة المشاريع
+        onAdd(); // Call function to update the project list
       }
     } catch (error) {
       console.error("Error adding project:", error);
@@ -77,12 +77,12 @@ const AddProject = ({ onAdd }) => {
 
   return (
     <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-md">
-      <h3 className="text-xl mb-4">إضافة مشروع جديد</h3>
+      <h3 className="text-xl mb-4">Add New Project</h3>
       <input
         type="text"
         value={projectNumber}
         onChange={(e) => setProjectNumber(e.target.value)}
-        placeholder="رقم المشروع"
+        placeholder="Project Number"
         className="block w-full p-2 mb-4 border border-gray-300 rounded"
         required
       />
@@ -90,7 +90,7 @@ const AddProject = ({ onAdd }) => {
         type="text"
         value={name}
         onChange={(e) => setName(e.target.value)}
-        placeholder="اسم المشروع"
+        placeholder="Project Name"
         className="block w-full p-2 mb-4 border border-gray-300 rounded"
         required
       />
@@ -98,14 +98,14 @@ const AddProject = ({ onAdd }) => {
         type="text"
         value={location}
         onChange={(e) => setLocation(e.target.value)}
-        placeholder="الموقع"
+        placeholder="Location"
         className="block w-full p-2 mb-4 border border-gray-300 rounded"
       />
       <input
         type="text"
         value={assignedLocation}
         onChange={(e) => setAssignedLocation(e.target.value)}
-        placeholder="الموقع المعين"
+        placeholder="Assigned Location"
         className="block w-full p-2 mb-4 border border-gray-300 rounded"
       />
       <input
@@ -125,34 +125,34 @@ const AddProject = ({ onAdd }) => {
         onChange={(e) => setStatus(e.target.value)}
         className="block w-full p-2 mb-4 border border-gray-300 rounded"
       >
-        <option value="Active">نشط</option>
-        <option value="Expired">منتهي</option>
-        <option value="Completed">مكتمل</option>
+        <option value="Active">Active</option>
+        <option value="Expired">Expired</option>
+        <option value="Completed">Completed</option>
       </select>
 
-      {/* قائمة الشركات */}
+      {/* Company List */}
       <select
         value={companyId}
         onChange={(e) => setCompanyId(e.target.value)}
         className="block w-full p-2 mb-4 border border-gray-300 rounded"
         required
       >
-        <option value="">اختر الشركة</option>
-        {comowns.map((comown) => (
-            <option key={comown._id} value={comown._id}>
-            {comown.name}
+        <option value="">Select Company</option>
+        {companies.map((company) => (
+          <option key={company._id} value={company._id}>
+            {company.name}
           </option>
         ))}
       </select>
 
-      {/* قائمة المقاولين */}
+      {/* Contractor List */}
       <select
         value={contractorId}
         onChange={(e) => setContractorId(e.target.value)}
         className="block w-full p-2 mb-4 border border-gray-300 rounded"
         required
       >
-        <option value="">اختر المقاول</option>
+        <option value="">Select Contractor</option>
         {contractors.map((contractor) => (
           <option key={contractor._id} value={contractor._id}>
             {contractor.name}
@@ -161,7 +161,7 @@ const AddProject = ({ onAdd }) => {
       </select>
 
       <button type="submit" className="bg-blue-500 text-white p-2 rounded">
-        إضافة
+        Add
       </button>
     </form>
   );

@@ -19,7 +19,7 @@ const ContractorDashboard = () => {
       if (!res.ok) throw new Error("Network response was not ok");
       return res.json();
     } catch (error) {
-      throw new Error("حدث خطأ أثناء جلب البيانات");
+      throw new Error("An error occurred while fetching data");
     }
   };
 
@@ -39,18 +39,18 @@ const ContractorDashboard = () => {
   });
 
   if (workersLoading || projectsLoading || dailyReportsLoading) {
-    return <div>جاري التحميل...</div>;
+    return <div>Loading...</div>;
   }
 
   if (workersError || projectsError || dailyReportsError) {
-    toast.error("حدث خطأ أثناء جلب البيانات");
+    toast.error("An error occurred while fetching data");
   }
 
   const chartData = {
     labels: dailyReports?.map((report) => new Date(report.date).toLocaleDateString()),
     datasets: [
       {
-        label: "الحضور اليومي",
+        label: "Daily Attendance",
         data: dailyReports?.map((report) => report.attendance_count),
         borderColor: "rgba(75, 192, 192, 1)",
         fill: false,
@@ -61,19 +61,19 @@ const ContractorDashboard = () => {
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
       <ToastContainer />
-      <h1 className="text-3xl font-bold mb-6 text-center">لوحة تحكم المقاولين</h1>
+      <h1 className="text-3xl font-bold mb-6 text-center">Contractor Dashboard</h1>
 
-      {/* إدارة العمال */}
+      {/* Worker Management */}
       <div className="bg-white p-6 rounded-lg shadow-md mb-6">
-        <h2 className="text-xl font-semibold mb-4">إدارة العمال</h2>
+        <h2 className="text-xl font-semibold mb-4">Worker Management</h2>
         <div className="overflow-x-auto">
           <table className="w-full border-collapse">
             <thead>
               <tr className="bg-gray-200">
-                <th className="p-3 text-left">الاسم</th>
-                <th className="p-3 text-left">المسمى الوظيفي</th>
-                <th className="p-3 text-left">الجنسية</th>
-                <th className="p-3 text-left">الإجراءات</th>
+                <th className="p-3 text-left">Name</th>
+                <th className="p-3 text-left">Job Title</th>
+                <th className="p-3 text-left">Nationality</th>
+                <th className="p-3 text-left">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -97,9 +97,9 @@ const ContractorDashboard = () => {
         </div>
       </div>
 
-      {/* التقارير */}
+      {/* Reports */}
       <div className="bg-white p-6 rounded-lg shadow-md">
-        <h2 className="text-xl font-semibold mb-4">التقارير</h2>
+        <h2 className="text-xl font-semibold mb-4">Reports</h2>
         <div className="w-full h-96">
           <Line data={chartData} options={{ responsive: true }} />
         </div>

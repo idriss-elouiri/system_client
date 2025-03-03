@@ -3,25 +3,24 @@
 import React, { useState, useEffect } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import AttendanceTable from "./AttendanceTable";
 
 const Attendance = () => {
-  const [attendance, setAttendance] = useState([]);
-  const [workers, setWorkers] = useState([]); // قائمة العمال
-  const [projects, setProjects] = useState([]); // قائمة المشاريع
+  const [workers, setWorkers] = useState([]); // Workers list
+  const [projects, setProjects] = useState([]); // Projects list
   const [formData, setFormData] = useState({
     worker_id: "",
     project_id: "",
     date: "",
-    status: "حاضر",
+    status: "Present",
     worker_name: "",
-    nationality: "سعودي",
+    nationality: "Saudi",
     job_title: "",
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-
-  // دالة لجلب البيانات
+  // Function to fetch data
   const fetchData = async (endpoint) => {
     try {
       const res = await fetch(`${apiUrl}${endpoint}`);
@@ -31,37 +30,29 @@ const Attendance = () => {
       return res.json();
     } catch (error) {
       setError(error.message);
-      toast.error("حدث خطأ أثناء جلب البيانات");
+      toast.error("An error occurred while fetching data");
     }
   };
 
-  // جلب جميع سجلات الحضور
-  const fetchAttendance = async () => {
-    setLoading(true);
-    const data = await fetchData("/api/attendance");
-    if (data) setAttendance(data);
-    setLoading(false);
-  };
 
-  // جلب قائمة العمال
+  // Fetch workers list
   const fetchWorkers = async () => {
     const data = await fetchData("/api/workers");
     if (data) setWorkers(data);
   };
 
-  // جلب قائمة المشاريع
+  // Fetch projects list
   const fetchProjects = async () => {
     const data = await fetchData("/api/projects");
     if (data) setProjects(data);
   };
 
   useEffect(() => {
-    fetchAttendance();
     fetchWorkers();
     fetchProjects();
   }, []);
 
-  // تسجيل حضور جديد
+  // Register new attendance
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -73,19 +64,19 @@ const Attendance = () => {
       });
       const data = await res.json();
       if (res.ok) {
-        toast.success("تم تسجيل الحضور بنجاح");
+        toast.success("Attendance recorded successfully");
         fetchAttendance();
         setFormData({
           worker_id: "",
           project_id: "",
           date: "",
-          status: "حاضر",
+          status: "Present",
           worker_name: "",
-          nationality: "سعودي",
+          nationality: "Saudi",
           job_title: "",
         });
       } else {
-        throw new Error(data.message || "حدث خطأ أثناء تسجيل الحضور");
+        throw new Error(data.message || "An error occurred while recording attendance");
       }
     } catch (error) {
       setError(error.message);
@@ -93,7 +84,7 @@ const Attendance = () => {
     }
   };
 
-  // تحديث اسم العامل عند اختياره
+  // Update worker name when selected
   const handleWorkerChange = (workerId) => {
     const selectedWorker = workers.find((worker) => worker._id === workerId);
     if (selectedWorker) {
@@ -108,36 +99,36 @@ const Attendance = () => {
   };
 
   if (loading) {
-    return <div>جاري التحميل...</div>;
+    return <div>Loading...</div>;
   }
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
       <ToastContainer />
-      <h1 className="text-3xl font-bold mb-6 text-center">إدارة الحضور</h1>
+      <h1 className="text-3xl font-bold mb-6 text-center">Attendance Management</h1>
 
-      {/* نموذج تسجيل حضور */}
+      {/* Attendance Registration Form */}
       <form
         onSubmit={handleSubmit}
         className="bg-white p-6 rounded-lg shadow-md mb-6"
       >
-        <h2 className="text-xl font-semibold mb-4">تسجيل حضور جديد</h2>
+        <h2 className="text-xl font-semibold mb-4">Register New Attendance</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* قائمة العمال */}
+          {/* Workers List */}
           <select
             value={formData.worker_id}
             onChange={(e) => handleWorkerChange(e.target.value)}
             className="p-2 border rounded"
             required
           >
-            <option value="">اختر العامل</option>
+            <option value="">Select Worker</option>
             {workers.map((worker) => (
               <option key={worker._id} value={worker._id}>
                 {worker.name}
               </option>
             ))}
           </select>
-          {/* قائمة المشاريع */}
+          {/* Projects List */}
           <select
             value={formData.project_id}
             onChange={(e) =>
@@ -146,7 +137,7 @@ const Attendance = () => {
             className="p-2 border rounded"
             required
           >
-            <option value="">اختر المشروع</option>
+            <option value="">Select Project</option>
             {projects.map((project) => (
               <option key={project._id} value={project._id}>
                 {project.name}
@@ -167,8 +158,8 @@ const Attendance = () => {
             }
             className="p-2 border rounded"
           >
-            <option value="حاضر">حاضر</option>
-            <option value="غائب">غائب</option>
+            <option value="Present">Present</option>
+            <option value="Absent">Absent</option>
           </select>
           <input
             type="text"
@@ -176,7 +167,7 @@ const Attendance = () => {
             onChange={(e) =>
               setFormData({ ...formData, worker_name: e.target.value })
             }
-            placeholder="اسم العامل"
+            placeholder="Worker Name"
             className="p-2 border rounded"
             required
           />
@@ -187,8 +178,8 @@ const Attendance = () => {
             }
             className="p-2 border rounded"
           >
-            <option value="سعودي">سعودي</option>
-            <option value="غير سعودي">غير سعودي</option>
+            <option value="Saudi">Saudi</option>
+            <option value="Non-Saudi">Non-Saudi</option>
           </select>
           <input
             type="text"
@@ -196,7 +187,7 @@ const Attendance = () => {
             onChange={(e) =>
               setFormData({ ...formData, job_title: e.target.value })
             }
-            placeholder="المسمى الوظيفي"
+            placeholder="Job Title"
             className="p-2 border rounded"
             required
           />
@@ -205,40 +196,10 @@ const Attendance = () => {
           type="submit"
           className="mt-4 bg-blue-500 text-white px-4 py-2 rounded"
         >
-          تسجيل
+          Register
         </button>
       </form>
-
-      {/* عرض سجلات الحضور */}
-      <div className="bg-white p-6 rounded-lg shadow-md">
-        <h2 className="text-xl font-semibold mb-4">سجلات الحضور</h2>
-        <div className="overflow-x-auto">
-          <table className="w-full border-collapse">
-            <thead>
-              <tr className="bg-gray-200">
-                <th className="p-3 text-left">اسم العامل</th>
-                <th className="p-3 text-left">التاريخ</th>
-                <th className="p-3 text-left">الحالة</th>
-                <th className="p-3 text-left">الجنسية</th>
-                <th className="p-3 text-left">المسمى الوظيفي</th>
-              </tr>
-            </thead>
-            <tbody>
-              {attendance.map((record) => (
-                <tr key={record._id} className="border-b hover:bg-gray-50">
-                  <td className="p-3">{record.worker_name}</td>
-                  <td className="p-3">
-                    {new Date(record.date).toLocaleDateString()}
-                  </td>
-                  <td className="p-3">{record.status}</td>
-                  <td className="p-3">{record.nationality}</td>
-                  <td className="p-3">{record.job_title}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
+      <AttendanceTable/>
     </div>
   );
 };
